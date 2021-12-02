@@ -26,6 +26,7 @@ float* c;
 
 float Factorial(int n) {
     if (n == 0) return 1;
+    else if (n<0) return false;
     return n * Factorial(n-1);
 }
 
@@ -44,7 +45,7 @@ void coefficients(float* c, int n, float t) {   // n = size, t = part of line
     s[n] = 1;
 
     for (int i = 1; i < n + 1; i++) {
-        r[i] = (t * ((float)(n - i + 1) / i)) * r[i - 1];
+        r[i] = (t * ((float)(n - i + 1) / i)); // * r[i - 1];
     }
 
     for (int i = n - 1; i >= 0; i--) {
@@ -73,28 +74,32 @@ void GL_render()
         glVertex2f(points[i - 1][0], points[i - 1][1]);
     }
 
-    for (float t = 0; t <= 1.001; t += 0.01) {   // bezier curve
+    for (float t = 0; t <= 1.00; t += 0.1) {   // bezier curve
         if (points.size() > 1) {
             vec2 sum(0.0,0.0);
-            float* c = new float[points.size() + 1];
-            coefficients(c, points.size(), t);
-            for (unsigned i = 0; i < points.size(); i++) {
-                sum[0] += c[i] * points[i][0];
-                sum[1] += c[i] * points[i][1];
+            // float* c = new float[points.size() + 1];
+            // coefficients(c, points.size(), t);
+            // for (unsigned i = 0; i < points.size(); i++) {
+            //     sum[0] += c[i] * points[i][0];
+            //     sum[1] += c[i] * points[i][1];
 
-                cout << sum[0] << "," <<sum[1] << endl;
-                cout << c[i] << endl;
+            //     cout << sum[0] << "," <<sum[1] << "\t";
+            //     cout << c[i] << "\t";
+            //     cout << points[i][0] << "," << points[i][1] << endl;
+            // }
+            
+            for (unsigned i = 0; i < points.size(); i++) {
+                float B = Binomial(points.size()-1, i, t);
+                sum[0] += B * points[i][0];
+                sum[1] += B * points[i][1];
+                cout << sum[0] << "," <<sum[1] << "\t";
+                cout << B << "\t";
                 cout << points[i][0] << "," << points[i][1] << endl;
             }
-            
-            // for (unsigned i = 0; i < points.size(); i++) {
-            //     float B = Binomial(points.size(), i, t);
-            //     sum[0] += B * points[i][0];
-            //     sum[1] += B * points[i][1];
-            // }
 
         
             glVertex2f(sum[0], sum[1]);
+            //glVertex2f(sum[0], sum[1]);
         }
 
         delete[] c;
